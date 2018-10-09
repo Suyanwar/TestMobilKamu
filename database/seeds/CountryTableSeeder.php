@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Country;
 
 class CountryTableSeeder extends Seeder
 {
@@ -16,33 +17,15 @@ class CountryTableSeeder extends Seeder
         DB::table('mst_country')->delete();
 
         // Seed New Country
-        DB::table('mst_country')->insert([
-            'name'       => 'Afghanistan',
-            'capital'    => 'Kabul',
-            'region'     => 'Asia',
-            'sub_region' => 'Southern Asia',
-            'population' => 27657145
-        ]);
-        DB::table('mst_country')->insert([
-            'name'       => 'Åland Islands',
-            'capital'    => 'Mariehamn',
-            'region'     => 'Europe',
-            'sub_region' => 'Northern Europe',
-            'population' => 28875
-        ]);
-        DB::table('mst_country')->insert([
-            'name'       => 'Albania',
-            'capital'    => 'Tirana',
-            'region'     => 'Europe',
-            'sub_region' => 'Southern Europe',
-            'population' => 2886026
-        ]);
-        DB::table('mst_country')->insert([
-            'name'       => 'Algeria',
-            'capital'    => 'Algiers',
-            'region'     => 'Africa',
-            'sub_region' => 'Northern Africa',
-            'population' => 40400000
-        ]);
+        $data = json_decode(file_get_contents("https://restcountries.eu/rest/v2/all"));
+        foreach($data as $d){
+            $insert = new Country;
+            $insert->name = $d->name;
+            $insert->capital = $d->capital;
+            $insert->region = $d->region;
+            $insert->sub_region = $d->subregion;
+            $insert->population = $d->population;
+            $insert->save();
+        }
     }
 }
